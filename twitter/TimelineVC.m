@@ -45,9 +45,10 @@
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
     //self.navigationItem.rightBarButtonItem = self.editButtonItem;
     
-    UIBarButtonItem *composeTweetButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd
-                                                                                   target:self
-                                                                                   action:@selector(composeTweet)];
+    UIBarButtonItem *composeTweetButton = [[UIBarButtonItem alloc] initWithTitle:@"Compose"
+                                                                        style:UIBarButtonItemStyleBordered
+                                                                        target:self
+                                                                        action:@selector(composeTweet)];
     
     self.navigationItem.rightBarButtonItem = composeTweetButton;
     
@@ -77,50 +78,32 @@
 {
     static NSString *CellIdentifier = @"TweetCell";
     TweetCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
-    //TweetCell *cell = [[TweetCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
-
+    
     Tweet *tweet = self.tweets[indexPath.row];
-    
-    cell.tweetText.frame = CGRectMake(cell.tweetText.frame.origin.x, cell.tweetText.frame.origin.y, cell.tweetText.frame.size.width, 0);
-    
     cell.tweetText.text = tweet.text;
     cell.tweetTime.text = tweet.created_at;
     cell.tweetUsername.text = tweet.username;
     cell.tweetProfileImage.image = tweet.profileImage;
     
-    /*
-    //Calculate the expected size based on the font and linebreak mode of your label
-    // FLT_MAX here simply means no constraint in height
     CGSize maximumLabelSize = CGSizeMake(296, FLT_MAX);
-    
     CGSize expectedLabelSize = [tweet.text sizeWithFont:cell.tweetText.font constrainedToSize:maximumLabelSize lineBreakMode:cell.tweetText.lineBreakMode];
-    
-    //adjust the label the the new height.
-    CGRect newFrame = cell.tweetText.frame;
-    newFrame.size.height = expectedLabelSize.height;
-    cell.tweetText.frame = newFrame;
-    */
+    cell.tweetText.frame = CGRectMake(cell.tweetText.frame.origin.x, cell.tweetText.frame.origin.y, cell.tweetText.frame.size.width, expectedLabelSize.height);
     
     cell.tweetText.numberOfLines = 0;
     [cell.tweetText sizeToFit];
     
-    /*
-    cell.tweetText.userInteractionEnabled = YES;
-    UITapGestureRecognizer *tapGesture =
-    [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(labelTap)];
-    [cell.tweetText addGestureRecognizer:tapGesture];
-    */
-    
     return cell;
 }
-
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     Tweet *tweet = self.tweets[indexPath.row];
-    return [tweet.text length];
+    
+    CGSize maximumLabelSize = CGSizeMake(296, FLT_MAX);
+    CGSize expectedLabelSize = [tweet.text sizeWithFont:[UIFont fontWithName:@"HelveticaNeue" size:15.0f] constrainedToSize:maximumLabelSize lineBreakMode:NSLineBreakByWordWrapping];
+    //Tweet text label starts at 45 from top
+    return expectedLabelSize.height + 45;
 }
-
 
 /*
 // Override to support conditional editing of the table view.
@@ -189,7 +172,7 @@
 
 - (void)reload {
     [[TwitterClient instance] homeTimelineWithCount:20 sinceId:0 maxId:0 success:^(AFHTTPRequestOperation *operation, id response) {
-        NSLog(@"%@", response);
+        //NSLog(@"%@", response);
         self.tweets = [Tweet tweetsWithArray:response];
         [self.tableView reloadData];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
