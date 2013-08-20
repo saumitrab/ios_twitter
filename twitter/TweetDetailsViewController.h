@@ -11,7 +11,8 @@
 
 @interface TweetDetailsViewController : UIViewController
 
-@property (nonatomic, weak) IBOutlet UILabel *username;
+@property (nonatomic, weak) IBOutlet UILabel *name;
+@property (nonatomic, weak) IBOutlet UILabel *screenname;
 @property (nonatomic, weak) IBOutlet UILabel *tweetText;
 @property (nonatomic, weak) IBOutlet UIImageView *profileImageView;
 

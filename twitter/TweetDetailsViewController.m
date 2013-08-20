@@ -28,8 +28,9 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     
-    self.username.text = self.tweet.username;
+    self.name.text = self.tweet.username;
     self.tweetText.text = self.tweet.text;
+    self.screenname.text = self.tweet.screenname;
     self.profileImageView.image = self.tweet.profileImage;    
 }
 
